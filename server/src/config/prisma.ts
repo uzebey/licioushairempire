@@ -1,9 +1,9 @@
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { PrismaClient } from '../generated/prisma/client';
 
-// The adapter resolves the file path relative to process.cwd(),
-// which is the server/ folder when you run `npm run dev`.
-const adapter = new PrismaBetterSqlite3({ url: 'file:./prisma/dev.db' });
+const adapter = new PrismaBetterSqlite3({
+  url: process.env.DATABASE_URL ?? 'file:./prisma/dev.db',
+});
 
 /**
  * Single shared Prisma client for the whole server.

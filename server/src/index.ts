@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import productsRouter from './routes/products.routes';
 import authRouter from './routes/auth.routes';
 import ordersRouter from './routes/orders.routes';
@@ -11,13 +12,15 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? 'http://localhost:4200';
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Only allow requests from our Angular app's origin (prevents random
-// websites from calling our API directly from a browser using a visitor's session).
-app.use(cors({ origin: CLIENT_ORIGIN }));
+// In production Angular is served from the same origin, so no CORS needed.
+// In dev the Angular dev server runs on a different port.
+if (!isProduction) {
+  const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN ?? 'http://localhost:4200';
+  app.use(cors({ origin: CLIENT_ORIGIN }));
+}
 
-// Parse incoming JSON request bodies into req.body
 app.use(express.json());
 
 app.get('/api/health', (_req, res) => {
@@ -29,7 +32,16 @@ app.use('/api/auth', authRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/admin', adminRouter);
 
-// Error handler must be registered last, after all routes
+// In production: serve the Angular build and let Angular's router handle all
+// non-API paths (so page refreshes on /cart, /login etc. still work).
+if (isProduction) {
+  const clientBuild = path.join(__dirname, '../../client/dist/client/browser');
+  app.use(express.static(clientBuild));
+  app.get('*', (_req, res) => {
+    res.sendFile(path.join(clientBuild, 'index.html'));
+  });
+}
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
