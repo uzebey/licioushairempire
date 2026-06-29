@@ -1,0 +1,64 @@
+<!-- ── Hero Banner ─────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">Queen of Luxury Hairs &middot; Enugu</span>
+    <h1>Premium Hair<br>for Every Queen</h1>
+    <p class="hero-sub">Brazilian &bull; Peruvian &bull; Closures &bull; Wigs</p>
+    <a class="hero-btn" href="#collection">Shop the Collection</a>
+  </div>
+</section>
+
+<!-- ── Product Grid ────────────────────────────────────────────────────── -->
+<section class="product-section" id="collection">
+  <div class="section-heading">
+    <h2>Our Collection</h2>
+    <div class="heading-line"></div>
+  </div>
+
+  @if (products().length === 0) {
+    <p class="loading-text">Loading collection&hellip;</p>
+  } @else {
+    <div class="grid">
+      @for (product of products(); track product.id) {
+        <article class="card">
+          <div class="card-thumb">
+            @if (product.images[0]) {
+              <img [src]="product.images[0]" [alt]="product.name" class="thumb-img" loading="lazy" />
+            } @else {
+              <span class="thumb-category">{{ product.category | titlecase }}</span>
+            }
+            @if (product.stockQuantity === 0) {
+              <span class="badge-sold-out">Sold Out</span>
+            }
+          </div>
+
+          <div class="card-body">
+            <h3>{{ product.name }}</h3>
+            <p class="card-meta">
+              @if (product.texture) { {{ product.texture | titlecase }} }
+              @if (product.lengthInches) { &middot; {{ product.lengthInches }}&Prime; }
+            </p>
+            <p class="card-price">
+              {{ toNaira(product.priceInKobo) | currency: 'NGN' : 'symbol' : '1.0-0' }}
+            </p>
+
+            @if (product.stockQuantity > 0) {
+              <p class="stock in-stock">&#10003; In Stock</p>
+            } @else {
+              <p class="stock out-of-stock">Out of Stock</p>
+            }
+
+            <button
+              type="button"
+              class="add-btn"
+              [disabled]="product.stockQuantity === 0"
+              (click)="addToCart(product)"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

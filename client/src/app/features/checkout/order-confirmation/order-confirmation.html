@@ -1,0 +1,53 @@
+<section class="confirmation-page">
+  @if (loading()) {
+    <div class="loading">
+      <p>Confirming your payment&hellip;</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <h1>Payment Issue</h1>
+      <p class="error-msg">{{ error() }}</p>
+      <a routerLink="/cart" class="btn-secondary">Back to Cart</a>
+    </div>
+  } @else if (order()) {
+    <div class="success-state">
+      <div class="checkmark" aria-hidden="true">&#10003;</div>
+      <h1>Order Confirmed!</h1>
+      <p class="sub">Thank you for your purchase. We'll contact you shortly with delivery details.</p>
+
+      <div class="order-card">
+        <p class="order-ref">Order #{{ order()!.id.slice(-8).toUpperCase() }}</p>
+
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of order()!.items; track item.id) {
+              <tr>
+                <td>{{ item.productName }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ toNaira(item.priceInKobo * item.quantity) | currency: 'NGN' : 'symbol' : '1.0-0' }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"><strong>Total</strong></td>
+              <td><strong>{{ toNaira(order()!.totalInKobo) | currency: 'NGN' : 'symbol' : '1.0-0' }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="actions">
+        <a routerLink="/account/orders" class="btn-secondary">View My Orders</a>
+        <a routerLink="/" class="btn-primary">Continue Shopping</a>
+      </div>
+    </div>
+  }
+</section>

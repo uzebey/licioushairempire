@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ─── Products ───────────────────────────────────────────────────────────────
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  description   String
+  category      String   // "brazilian" | "peruvian" | "weavon" etc.
+  texture       String?  // "straight" | "body-wave" etc. (optional)
+  lengthInches  Int?
+  priceInKobo   Int      // 1 NGN = 100 kobo; stored as integer to avoid float errors
+  currency      String   @default("NGN")
+  stockQuantity Int      @default(0)
+  images        String   @default("[]") // JSON-encoded string[]; SQLite has no array type
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orderItems    OrderItem[]
+}
+
+// ─── Users ──────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   // NEVER store plain-text passwords — always a bcrypt hash
+  name         String
+  role         String   @default("customer") // "customer" or "admin"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders       Order[]
+}
+
+// ─── Orders ─────────────────────────────────────────────────────────────────
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  status      String      @default("pending") // pending → paid → shipped → delivered
+  totalInKobo Int
+  paystackRef String?     // Reference returned by Paystack after successful payment
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  items       OrderItem[]
+}
+
+// ─── Order items ─────────────────────────────────────────────────────────────
+
+// We snapshot the product name and price at checkout time.
+// This way the order history stays accurate even if the product
+// is later edited or deleted.
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id])
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  productName String  // snapshot
+  priceInKobo Int     // snapshot
+  quantity    Int
+}

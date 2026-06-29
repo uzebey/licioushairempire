@@ -1,0 +1,76 @@
+// ─── Design Tokens ──────────────────────────────────────────────────────────
+// All colours, fonts and shadows live here as CSS variables so every
+// component in the app shares the same palette.
+
+:root {
+  // Backgrounds
+  --cream:      #fdf8f3;
+  --cream-alt:  #f5ede3;
+  --surface:    #ffffff;
+
+  // Brand browns
+  --brown-deep: #2c1810;
+  --brown-rich: #4a2416;
+  --brown-mid:  #6b4c3b;
+  --brown-light:#a07060;
+
+  // Rose gold accent (buttons, prices, links)
+  --rose-gold:      #c9956c;
+  --rose-gold-dark: #a5714a;
+
+  // Gold highlight — matched to the brand logo's true yellow-gold
+  --gold:       #c9a227;
+  --gold-light: #f0dfa0;
+
+  // Utility
+  --border:     #e8d5c4;
+  --success:    #4a7c59;
+  --error:      #b71c1c;
+
+  // Typography
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans:  'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  // Shadows
+  --shadow:       0 4px 20px rgba(44, 24, 16, 0.10);
+  --shadow-hover: 0 8px 32px rgba(44, 24, 16, 0.18);
+
+  // Radii
+  --radius:    10px;
+  --radius-sm: 6px;
+  --radius-pill: 999px;
+}
+
+// ─── Base Reset ──────────────────────────────────────────────────────────────
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--cream);
+  color: var(--brown-deep);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-serif);
+  line-height: 1.2;
+  margin: 0 0 0.5rem;
+}
+
+a {
+  color: var(--rose-gold);
+  transition: color 0.2s;
+
+  &:hover { color: var(--rose-gold-dark); }
+}
+
+img { max-width: 100%; display: block; }
+
+button, input, select, textarea {
+  font-family: var(--font-sans);
+}

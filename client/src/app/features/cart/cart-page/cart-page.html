@@ -1,0 +1,61 @@
+<section class="cart-page">
+  <h1>Your Cart</h1>
+
+  @if (cartService.cartItems().length === 0) {
+    <p class="empty">
+      Your cart is empty. <a routerLink="/">Continue shopping</a>
+    </p>
+  } @else {
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of cartService.cartItems(); track item.productId) {
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ toNaira(item.priceInKobo) | currency: 'NGN' : 'symbol' : '1.0-0' }}</td>
+            <td class="qty">
+              <button type="button" (click)="decrement(item.productId, item.quantity)" aria-label="Decrease quantity">
+                &minus;
+              </button>
+              <span>{{ item.quantity }}</span>
+              <button type="button" (click)="increment(item.productId, item.quantity)" aria-label="Increase quantity">
+                +
+              </button>
+            </td>
+            <td>{{ toNaira(item.priceInKobo * item.quantity) | currency: 'NGN' : 'symbol' : '1.0-0' }}</td>
+            <td>
+              <button type="button" class="remove" (click)="remove(item.productId)">Remove</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="cart-summary">
+      <p class="total">
+        Total: <strong>{{ toNaira(cartService.subtotalInKobo()) | currency: 'NGN' : 'symbol' : '1.0-0' }}</strong>
+      </p>
+      <div class="checkout-area">
+        @if (checkoutError()) {
+          <p class="checkout-error">{{ checkoutError() }}</p>
+        }
+        <button
+          type="button"
+          class="checkout-btn"
+          (click)="checkout()"
+          [disabled]="checkoutLoading()"
+        >
+          {{ checkoutLoading() ? 'Starting checkout…' : 'Proceed to Checkout' }}
+        </button>
+      </div>
+    </div>
+  }
+</section>

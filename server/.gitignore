@@ -1,0 +1,12 @@
+node_modules/
+dist/
+
+# Never commit real secrets/config
+.env
+.env.local
+
+# SQLite database files (dev data, not source code)
+prisma/*.db
+prisma/*.db-journal
+
+/src/generated/prisma

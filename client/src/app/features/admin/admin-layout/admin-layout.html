@@ -1,0 +1,14 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">Admin Panel</div>
+    <nav>
+      <a routerLink="/admin/products" routerLinkActive="active">Products</a>
+      <a routerLink="/admin/orders" routerLinkActive="active">Orders</a>
+    </nav>
+    <a routerLink="/" class="back-link">&larr; Back to Shop</a>
+  </aside>
+
+  <main class="admin-main">
+    <router-outlet />
+  </main>
+</div>
