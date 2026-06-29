@@ -1,15 +1,13 @@
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '../generated/prisma/client';
+import ws from 'ws';
 
-const adapter = new PrismaBetterSqlite3({
-  url: process.env.DATABASE_URL ?? 'file:./prisma/dev.db',
-});
+// ws polyfill needed in Node.js (Vercel's edge runtime has WebSocket built-in)
+neonConfig.webSocketConstructor = ws;
 
-/**
- * Single shared Prisma client for the whole server.
- * Creating a new PrismaClient() per request would open a new
- * database connection each time — expensive and unnecessary.
- */
+const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
+const adapter = new PrismaNeon(pool);
 const prisma = new PrismaClient({ adapter });
 
 export default prisma;
