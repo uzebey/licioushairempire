@@ -1,13 +1,14 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
+import 'dotenv/config';
+import { neonConfig } from '@neondatabase/serverless';
 import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '../generated/prisma/client';
 import ws from 'ws';
 
-// ws polyfill needed in Node.js (Vercel's edge runtime has WebSocket built-in)
+// ws polyfill required in Node.js — Vercel edge has WebSocket built-in
 neonConfig.webSocketConstructor = ws;
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
-const adapter = new PrismaNeon(pool);
+// PrismaNeon is a factory in Prisma v7: pass PoolConfig, it creates the Pool
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
 export default prisma;
