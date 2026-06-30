@@ -6,7 +6,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "npm ci --prefix server && npm run prisma:generate --prefix server && npm run prisma:push --prefix server && npm ci --prefix client && cd client && node_modules/.bin/ng build",
+    "build": "npm ci --prefix server && npm run prisma:generate --prefix server && npm ci --prefix client && cd client && node_modules/.bin/ng build",
     "start": "node server/dist/index.js",
     "seed": "npm run db:seed --prefix server"
   },
