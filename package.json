@@ -6,7 +6,7 @@
     "node": "24.x"
   },
   "scripts": {
-    "build": "npm ci --prefix server && npm run prisma:generate --prefix server && npm ci --prefix client && npm run build --prefix client",
+    "build": "npm ci --prefix server && npm run prisma:generate --prefix server && cd client && npm ci && npm run build",
     "start": "node server/dist/index.js",
     "seed": "npm run db:seed --prefix server"
   },
