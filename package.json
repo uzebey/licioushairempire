@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": ">=22"
+    "node": "22.x"
   },
   "scripts": {
     "build": "npm ci --prefix server && npm run prisma:generate --prefix server && npm ci --prefix client && cd client && node_modules/.bin/ng build",
