@@ -1,15 +1,18 @@
-import process from 'process';
+import 'dotenv/config';
 import bcrypt from 'bcryptjs';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { neonConfig } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '../src/generated/prisma/client';
+import ws from 'ws';
 
-const adapter = new PrismaBetterSqlite3({ url: 'file:./prisma/dev.db' });
+neonConfig.webSocketConstructor = ws;
+
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('Seeding database...');
 
-  // Delete in dependency order: items → orders → products
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.product.deleteMany();

@@ -1,15 +1,14 @@
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import 'dotenv/config';
+import { neonConfig } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
 import { PrismaClient } from '../generated/prisma/client';
+import ws from 'ws';
 
-// The adapter resolves the file path relative to process.cwd(),
-// which is the server/ folder when you run `npm run dev`.
-const adapter = new PrismaBetterSqlite3({ url: 'file:./prisma/dev.db' });
+// ws polyfill required in Node.js — Vercel edge has WebSocket built-in
+neonConfig.webSocketConstructor = ws;
 
-/**
- * Single shared Prisma client for the whole server.
- * Creating a new PrismaClient() per request would open a new
- * database connection each time — expensive and unnecessary.
- */
+// PrismaNeon is a factory in Prisma v7: pass PoolConfig, it creates the Pool
+const adapter = new PrismaNeon({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
 export default prisma;

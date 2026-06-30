@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ─── Products ───────────────────────────────────────────────────────────────
@@ -13,13 +13,13 @@ model Product {
   id            String   @id @default(cuid())
   name          String
   description   String
-  category      String   // "brazilian" | "peruvian" | "weavon" etc.
-  texture       String?  // "straight" | "body-wave" etc. (optional)
+  category      String
+  texture       String?
   lengthInches  Int?
-  priceInKobo   Int      // 1 NGN = 100 kobo; stored as integer to avoid float errors
+  priceInKobo   Int
   currency      String   @default("NGN")
   stockQuantity Int      @default(0)
-  images        String   @default("[]") // JSON-encoded string[]; SQLite has no array type
+  images        String   @default("[]") // JSON-encoded string[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -31,9 +31,9 @@ model Product {
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
-  passwordHash String   // NEVER store plain-text passwords — always a bcrypt hash
+  passwordHash String
   name         String
-  role         String   @default("customer") // "customer" or "admin"
+  role         String   @default("customer")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -46,9 +46,9 @@ model Order {
   id          String      @id @default(cuid())
   userId      String
   user        User        @relation(fields: [userId], references: [id])
-  status      String      @default("pending") // pending → paid → shipped → delivered
+  status      String      @default("pending")
   totalInKobo Int
-  paystackRef String?     // Reference returned by Paystack after successful payment
+  paystackRef String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
@@ -57,16 +57,13 @@ model Order {
 
 // ─── Order items ─────────────────────────────────────────────────────────────
 
-// We snapshot the product name and price at checkout time.
-// This way the order history stays accurate even if the product
-// is later edited or deleted.
 model OrderItem {
   id          String  @id @default(cuid())
   orderId     String
   order       Order   @relation(fields: [orderId], references: [id])
   productId   String
   product     Product @relation(fields: [productId], references: [id])
-  productName String  // snapshot
-  priceInKobo Int     // snapshot
+  productName String
+  priceInKobo Int
   quantity    Int
 }
